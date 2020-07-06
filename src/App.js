@@ -5,15 +5,29 @@ function App() {
 	return (
 		<div className="App">
 			<h1>React Calculator!</h1>
+			<Calculator />
+		</div>
+	);
+}
+
+class Calculator extends Component {
+	constructor(props) {
+		super(props);
+		this.state = {
+			display: "0",
+		};
+	}
+	render() {
+		return (
 			<div className="Calculator">
-				<Display />
+				<Display display={this.state.display} />
 				<Clear />
 				<Keypad />
 				<Operations />
 				<Equal />
 			</div>
-		</div>
-	);
+		);
+	}
 }
 
 class Display extends Component {
@@ -25,7 +39,7 @@ class Display extends Component {
 		return (
 			<div id="display">
 				<div id="top">0123456789</div>
-				<div id="bot">0123456789</div>
+				<div id="bot">{this.props.display}</div>
 			</div>
 		);
 	}
@@ -34,7 +48,9 @@ class Display extends Component {
 class Keypad extends Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			number: "",
+		};
 	}
 
 	render() {
