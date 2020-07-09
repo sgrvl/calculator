@@ -8,6 +8,7 @@ function App() {
 	return (
 		<div className="App">
 			<h1>React Calculator!</h1>
+			<p>(work in progress)</p>
 			<Calculator />
 		</div>
 	);
