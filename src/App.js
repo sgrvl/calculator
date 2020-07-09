@@ -14,15 +14,12 @@ function App() {
 }
 
 class Calculator extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			display: "0",
-			equation: "",
-			result: false,
-			click: true,
-		};
-	}
+	state = {
+		display: "0",
+		equation: "",
+		result: false,
+		click: true,
+	};
 
 	handleOperator = (key) => {
 		if (this.state.result === false) {
@@ -31,7 +28,7 @@ class Calculator extends Component {
 	};
 
 	handleKey = (key, res = false) => {
-		const regex = /[0()+\-*/.]/;
+		const regex = /[0+\-*/.]/;
 		if (this.state.result === false) {
 			this.setState({
 				display: regex.test(this.state.display[0])
@@ -95,12 +92,9 @@ class Calculator extends Component {
 }
 
 class Display extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			topDisplay: "",
-		};
-	}
+	state = {
+		topDisplay: "",
+	};
 
 	componentDidUpdate(prevProps) {
 		if (this.props.display !== prevProps.display) {
@@ -119,9 +113,13 @@ class Display extends Component {
 	render() {
 		console.log(this.props.result);
 		return (
-			<div id="display">
-				<div id="top">{this.state.topDisplay}</div>
-				<div id="bot">{this.props.display}</div>
+			<div className="DisplayWrap">
+				<div className="top" id="display">
+					{this.state.topDisplay}
+				</div>
+				<div className="bot" id="display">
+					{this.props.display}
+				</div>
 			</div>
 		);
 	}
@@ -169,21 +167,7 @@ class Keypad extends Component {
 	}
 }
 
-/*class GlobalClear extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-	render() {
-		return <button id="globalclear">C</button>;
-	}
-}*/
-
 class ClearEntry extends Component {
-	/*constructor(props) {
-		super(props);
-		this.state = {};
-	}*/
 	render() {
 		return (
 			<button id="clear" onClick={this.props.handleClearEntries}>
@@ -197,16 +181,32 @@ class Operations extends Component {
 	render() {
 		return (
 			<React.Fragment>
-				<button id="add" onClick={() => this.props.handleOperator("+")}>
+				<button
+					id="add"
+					className="operators"
+					onClick={() => this.props.handleOperator("+")}
+				>
 					&#43;
 				</button>
-				<button id="subtract" onClick={() => this.props.handleOperator("-")}>
+				<button
+					id="subtract"
+					className="operators"
+					onClick={() => this.props.handleOperator("-")}
+				>
 					&#8722;
 				</button>
-				<button id="multiply" onClick={() => this.props.handleOperator("*")}>
+				<button
+					id="multiply"
+					className="operators"
+					onClick={() => this.props.handleOperator("*")}
+				>
 					&#215;
 				</button>
-				<button id="divide" onClick={() => this.props.handleOperator("/")}>
+				<button
+					id="divide"
+					className="operators"
+					onClick={() => this.props.handleOperator("/")}
+				>
 					&#247;
 				</button>
 			</React.Fragment>
@@ -215,11 +215,6 @@ class Operations extends Component {
 }
 
 class Equal extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
-
 	handleKey = () => {
 		this.props.handleKey("=", true);
 	};
