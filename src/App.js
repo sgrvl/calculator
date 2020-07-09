@@ -1,5 +1,8 @@
 import React, { Component } from "react";
 import "./App.css";
+import { create, all } from "mathjs";
+
+const math = create(all);
 
 function App() {
 	return (
@@ -15,35 +18,77 @@ class Calculator extends Component {
 		super(props);
 		this.state = {
 			display: "0",
+			equation: "",
+			result: false,
+			click: true,
 		};
 	}
 
-	handleOperator = (key) => this.setState({ display: key });
+	handleOperator = (key) => {
+		if (this.state.result === false) {
+			this.setState({ display: key });
+		}
+	};
 
-	handleKey = (key) => {
-		this.setState({
-			display:
-				this.state.display === "0"
-					? this.state.display.replace("0", key)
+	handleKey = (key, res = false) => {
+		const regex = /[0()+\-*/.]/;
+		if (this.state.result === false) {
+			this.setState({
+				display: regex.test(this.state.display[0])
+					? this.state.display.replace(regex, key)
 					: this.state.display.concat(key),
-		});
+				result: res,
+			});
+		}
 	};
 
 	handleClearEntries = () => {
 		this.setState({
 			display: "0",
+			equation: "",
+			result: false,
+			click: true,
+		});
+	};
+
+	getEquation = (eq) => {
+		this.setState({
+			equation: eq, //.concat(this.state.display),
+		});
+	};
+
+	handleResult = (res) => {
+		this.setState({
+			display: res,
+		});
+	};
+
+	isClick = (c) => {
+		this.setState({
+			click: c,
 		});
 	};
 
 	render() {
 		return (
 			<div className="Calculator">
-				<Display display={this.state.display} isConcat={this.state.isConcat} />
-				<GlobalClear />
+				<Display
+					display={this.state.display}
+					isConcat={this.state.isConcat}
+					getEquation={this.getEquation}
+					equation={`${this.state.equation}=${this.state.display}`}
+					result={this.state.result}
+				/>
 				<ClearEntry handleClearEntries={this.handleClearEntries} />
 				<Keypad handleKey={this.handleKey} />
 				<Operations handleOperator={this.handleOperator} />
-				<Equal />
+				<Equal
+					equation={this.state.equation}
+					handleKey={this.handleKey}
+					handleResult={this.handleResult}
+					clicked={this.state.click}
+					isClick={this.isClick}
+				/>
 			</div>
 		);
 	}
@@ -61,15 +106,18 @@ class Display extends Component {
 		if (this.props.display !== prevProps.display) {
 			const display = this.props.display;
 			this.setState({
-				topDisplay:
-					this.props.display === "0"
-						? ""
-						: this.state.topDisplay.concat(display[display.length - 1]),
+				topDisplay: this.props.result
+					? this.props.equation
+					: this.props.display === "0"
+					? ""
+					: this.state.topDisplay.concat(display[display.length - 1]),
 			});
+			this.props.getEquation(this.state.topDisplay);
 		}
 	}
 
 	render() {
+		console.log(this.props.result);
 		return (
 			<div id="display">
 				<div id="top">{this.state.topDisplay}</div>
@@ -80,13 +128,6 @@ class Display extends Component {
 }
 
 class Keypad extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {
-			number: "",
-		};
-	}
-
 	render() {
 		return (
 			<div className="Keypad">
@@ -128,7 +169,7 @@ class Keypad extends Component {
 	}
 }
 
-class GlobalClear extends Component {
+/*class GlobalClear extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {};
@@ -136,27 +177,23 @@ class GlobalClear extends Component {
 	render() {
 		return <button id="globalclear">C</button>;
 	}
-}
+}*/
 
 class ClearEntry extends Component {
-	constructor(props) {
+	/*constructor(props) {
 		super(props);
 		this.state = {};
-	}
+	}*/
 	render() {
 		return (
 			<button id="clear" onClick={this.props.handleClearEntries}>
-				CE
+				AC
 			</button>
 		);
 	}
 }
 
 class Operations extends Component {
-	constructor(props) {
-		super(props);
-		this.state = {};
-	}
 	render() {
 		return (
 			<React.Fragment>
@@ -182,8 +219,31 @@ class Equal extends Component {
 		super(props);
 		this.state = {};
 	}
+
+	handleKey = () => {
+		this.props.handleKey("=", true);
+	};
+
+	handleEq = () => {
+		this.props.handleResult(`${math.evaluate(this.props.equation)}`);
+	};
+
+	isClick = (c) => {
+		this.props.isClick(c);
+	};
+
+	onClick = async () => {
+		await this.handleKey();
+		this.handleEq();
+		this.isClick(false);
+	};
+
 	render() {
-		return <button id="equals">&#61;</button>;
+		return (
+			<button id="equals" onClick={this.props.clicked ? this.onClick : null}>
+				&#61;
+			</button>
+		);
 	}
 }
 

@@ -8,6 +8,12 @@ body
   margin: auto
   text-align: center
 
+.test 
+  background-color: red
+
+.test2
+  background-color: black
+
 .Calculator
   display: grid
   grid: repeat(6, 1fr) / repeat(4, 1fr)
@@ -37,6 +43,9 @@ body
   #zero
     grid-column: 1 / span 2
     width: 100%
+
+#clear
+  grid-area: 2 / 1 / 3 / 3
 
 #add
   grid-area: 4 / 4 / 5 / 5
